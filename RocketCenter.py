@@ -1,3 +1,5 @@
+""" First version of Rocket center """
+
 import sys
 import pygame
 from settings import Settings
