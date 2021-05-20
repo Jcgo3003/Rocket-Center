@@ -11,4 +11,11 @@ class Settings:
 		self.bg_color = (66, 95, 192)
 
 		# Rocket settings
-		self.rocket_speed = 20
+		self.rocket_speed = 8
+
+		# Bullet settings
+		self.bullet_speed = 16.0
+		self.bullet_width = 15
+		self.bullet_height = 4
+		self.bullet_color = (255, 255, 255)
+		self.bullets_allowed = 6
