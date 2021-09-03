@@ -1,10 +1,14 @@
-""" Second version of Rocket center  vertical movement """
+""" Third version of Rocket center  vertical movement """
+# In this version is added:
+# A fleet of aliens comming towards the ship and dissapear if hit by a bullet
 
 import sys
 import pygame
 from settings import Settings
 from rocket import Rocket 
-from bullet import Bullet
+# from bullet import Bullet
+# from alien import Alien
+import random
 
 class RocketCenter:
 	""" A class to manage the general game assets and behavior """
