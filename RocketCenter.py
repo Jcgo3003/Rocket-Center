@@ -5,9 +5,9 @@
 import sys
 import pygame
 from settings import Settings
-from rocket import Rocket 
-# from bullet import Bullet
-# from alien import Alien
+from rocket import Rocket
+from bullet import Bullet
+from alien import Alien
 import random
 
 class RocketCenter:
