@@ -30,7 +30,63 @@ class RocketCenter:
 		# Setting my rocket 
 		self.rocket = Rocket(self)
 		self.bullets = pygame.sprite.Group()
+		self.aliens = pygame.sprite.Group()
 
+		self._create_fleet()
+
+	def _create_fleet(self):
+		""" Creating a fleet of aliens """
+		alien = Alien(self)
+		alien_width, alien_height = alien.rect.size
+
+		# Available space in x
+		rocket_width = self.rocket.rect.width 
+		available_space_x = self.settings.screen_width - (3 * alien_width) - rocket_width
+		number_columns = available_space_x // (2 * alien_width)
+
+		star_point_x = self.settings.screen_width - available_space_x
+
+		# Available space in y
+		available_space_y = self.settings.screen_height
+		number_aliens = available_space_y // (2 * alien_height)
+
+
+		for number_alien in range(number_aliens):
+			for number_column in range(number_columns):
+			# Creating an alien and place it in row,and saving 
+				r = random.randint(0, 50)
+
+				if not(r % 2):
+					self._create_alien(number_column,number_alien, star_point_x)
+
+
+	def _create_alien(self, number_column, number_alien, star_point_x):
+		""" Creating an alien """
+		alien = Alien(self)
+		alien_width, alien_height = alien.rect.size
+		
+		alien.x = alien_width + star_point_x + (2 * alien_width * number_column)
+
+		alien.rect.x = alien.x 
+		alien.rect.y = alien.rect.height + (2 * alien.rect.height * number_alien)
+
+		self.aliens.add(alien)
+
+		return [alien.rect.x, alien.rect.y]
+
+
+	def _check_fleet_edges(self):
+		""" Respond apprepriately if any aliens have reache an edge """
+		for alien in self.aliens.sprites():
+			if alien.check_edges():
+				self._change_fleet_direction()
+				break
+
+	def _change_fleet_direction(self):
+		""" Get the enitre fleet to the left"""
+		for alien in self.aliens.sprites():
+			alien.rect.x += self.settings.fleet_drop_speed
+		self.settings.fleet_direction *= 1
 
 	def run_game(self):
 		""" Start the main loop for the game """
@@ -38,8 +94,12 @@ class RocketCenter:
 			# Setting the check_events, update_screen and rocket update methons"""
 			self._check_events()
 			self._update_screen()
+			
 			self.rocket.update()
 			self._update_bullets()
+
+			self._update_aliens()
+
 
 	def _check_events(self):
 		""" Reponding te keypresses """
@@ -97,13 +157,35 @@ class RocketCenter:
 			if bullet.rect.left >= self.settings.screen_width:
 				self.bullets.remove(bullet)
 
+		self._check_bullet_alien_collisions()
+
+
+	def _check_bullet_alien_collisions(self):
+		""" Respond to bullet-alien collisions."""
+		# Remove any bullets and aliens that have collide
+		collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+		# Check for empty groups and creating a new fleet
+		if not self.aliens:
+			# Destroy exitsting bullets and create new fleet.
+			self.bullets.empty()
+			self._create_fleet()
+			
+	def _update_aliens(self):
+		""" Check if the fleet is at an edge,
+		then update the possitions of all arliens in the fleet."""
+		self._check_fleet_edges()
+		self.aliens.update()
 
 	def _update_screen(self):
 		""" Updating all the images in the screen """
 		self.screen.fill(self.settings.bg_color)
 		self.rocket.blitme()
+
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
+
+		self.aliens.draw(self.screen)
 
 		pygame.display.flip()
 
