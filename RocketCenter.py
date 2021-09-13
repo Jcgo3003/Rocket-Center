@@ -75,19 +75,6 @@ class RocketCenter:
 		return [alien.rect.x, alien.rect.y]
 
 
-	def _check_fleet_edges(self):
-		""" Respond apprepriately if any aliens have reache an edge """
-		for alien in self.aliens.sprites():
-			if alien.check_edges():
-				self._change_fleet_direction()
-				break
-
-	def _change_fleet_direction(self):
-		""" Get the enitre fleet to the left"""
-		for alien in self.aliens.sprites():
-			alien.rect.x += self.settings.fleet_drop_speed
-		self.settings.fleet_direction *= 1
-
 	def run_game(self):
 		""" Start the main loop for the game """
 		while True:
@@ -174,8 +161,13 @@ class RocketCenter:
 	def _update_aliens(self):
 		""" Check if the fleet is at an edge,
 		then update the possitions of all arliens in the fleet."""
-		self._check_fleet_edges()
+
 		self.aliens.update()
+
+		# look for alien-rocket collisions
+		if pygame.sprite.spritecollideany(self.rocket, self.aliens):
+			print("Ship hit")
+
 
 	def _update_screen(self):
 		""" Updating all the images in the screen """

@@ -21,7 +21,7 @@ class Settings:
 		self.bullets_allowed = 6
 
 		# Alien settings 
-		self.alien_speed = 0.1
+		self.alien_speed = 10
 
 
 		# Fleet_direction will always move left
