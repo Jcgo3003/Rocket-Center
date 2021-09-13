@@ -12,6 +12,7 @@ class Settings:
 
 		# Rocket settings
 		self.rocket_speed = 8
+		self.rocket_limit = 3
 
 		# Bullet settings
 		self.bullet_speed = 16.0
@@ -23,8 +24,6 @@ class Settings:
 		# Alien settings 
 		self.alien_speed = 10
 
-
 		# Fleet_direction will always move left
 		self.fleet_direction = -1
-
 		

@@ -3,8 +3,10 @@
 # A fleet of aliens comming towards the ship and dissapear if hit by a bullet
 
 import sys
+from time import sleep
 import pygame
 from settings import Settings
+from game_stats import GameStats
 from rocket import Rocket
 from bullet import Bullet
 from alien import Alien
@@ -27,12 +29,44 @@ class RocketCenter:
 		# Getting a name for the title
 		pygame.display.set_caption("Rocket Center")
 
+		# Creating an instance of game statistics
+		self.stats = GameStats(self)
+
 		# Setting my rocket 
 		self.rocket = Rocket(self)
 		self.bullets = pygame.sprite.Group()
 		self.aliens = pygame.sprite.Group()
 
 		self._create_fleet()
+
+	def _rocket_hit(self):
+		""" Respond to the rocked being hit by an alien """
+		if self.stats.rockets_left > 0:
+			# Decrement rockets_left
+			self.stats.rockets_left -= 1
+
+			# Get rid of any remaining aliens and bullets
+			self.aliens.empty()
+			self.bullets.empty()
+
+			# Create a new fleet and center the rocket
+			self._create_fleet()
+			self.rocket.center_rocket()
+
+			# Pause
+			sleep(0.5)
+		else:
+			self.stats.game_active = False
+
+	def _check_aliens_left(self):
+		""" Check if any rocket have reached the left side of the screen """
+		screen_rect = self.screen.get_rect()
+		for alien in self.aliens.sprites():
+			if alien.rect.left <= 0:
+				# Treat this thah same as if the rocket get hid 
+				self._rocket_hit()
+				break
+
 
 	def _create_fleet(self):
 		""" Creating a fleet of aliens """
@@ -82,10 +116,10 @@ class RocketCenter:
 			self._check_events()
 			self._update_screen()
 			
-			self.rocket.update()
-			self._update_bullets()
-
-			self._update_aliens()
+			if self.stats.game_active:
+				self.rocket.update()
+				self._update_bullets()
+				self._update_aliens()
 
 
 	def _check_events(self):
@@ -164,9 +198,11 @@ class RocketCenter:
 
 		self.aliens.update()
 
+		self._check_aliens_left()
+
 		# look for alien-rocket collisions
 		if pygame.sprite.spritecollideany(self.rocket, self.aliens):
-			print("Ship hit")
+			self._rocket_hit()
 
 
 	def _update_screen(self):
